@@ -34,7 +34,7 @@ $$
 
 Boundary values at the endpoints are held at their previous time level. For the short integration window used here, the pulse remains inside the domain, so boundary artifacts do not dominate the comparison.
 
-## Spatial and temporal discretization
+## Spatial grid and CFL number
 
 The domain is discretized with $N$ uniformly spaced nodes
 
@@ -44,33 +44,63 @@ x_i = x_{\min} + i\,\Delta x, \qquad
 i = 0,\ldots,N-1.
 $$
 
-Time is advanced with a constant step $\Delta t$. Let $u_i^{n} \approx u(x_i, n\Delta t)$. Because $c > 0$, information propagates from left to right, and a stable first-order scheme uses a backward (upwind) difference in space:
+Time is advanced with a constant step $\Delta t$. The Courant–Friedrichs–Lewy number is
+
+$$
+\nu = \frac{c\,\Delta t}{\Delta x}.
+$$
+
+## Finite-difference schemes
+
+Let $u_i^{n} \approx u(x_i, n\Delta t)$. The repository implements three explicit updates.
+
+### First-order upwind
+
+Because $c > 0$, information propagates from left to right:
 
 $$
 u_i^{n+1}
 =
 u_i^{n}
 -
-\nu \left( u_i^{n} - u_{i-1}^{n} \right),
-\qquad
-\nu = \frac{c\,\Delta t}{\Delta x}.
+\nu \left( u_i^{n} - u_{i-1}^{n} \right).
 $$
 
-Here $\nu$ is the Courant–Friedrichs–Lewy (CFL) number. For this explicit upwind method, stability requires
+Stability requires $0 < \nu \le 1$. The scheme is first-order accurate in space and time. Its leading error behaves like numerical diffusion proportional to
 
 $$
-0 < \nu \le 1.
+\frac{c\,\Delta x}{2}\,(1 - \nu)\,\frac{\partial^{2} u}{\partial x^{2}}.
 $$
 
-## Truncation error and numerical diffusion
+### FTCS
 
-A Taylor expansion shows that the scheme is first-order accurate in both space and time. The leading error behaves like a dissipative term proportional to
+Centered differences in space with forward Euler in time give
 
 $$
-\frac{c\,\Delta x}{2}\,(1 - \nu)\,\frac{\partial^{2} u}{\partial x^{2}},
+u_i^{n+1}
+=
+u_i^{n}
+-
+\frac{\nu}{2}\left(u_{i+1}^{n} - u_{i-1}^{n}\right).
 $$
 
-so the discrete pulse broadens as it travels unless $\nu = 1$. In this repository the default parameters give $\nu < 1$, which makes the numerical diffusion visible when the solution is compared with the exact translate $u_0(x - c t)$.
+For pure advection this method is unconditionally unstable: high-frequency modes grow for any $\nu > 0$. It is included as a negative control in the scheme comparison.
+
+### Lax–Wendroff
+
+Adding the second-order Lax–Wendroff correction restores stability for $|\nu| \le 1$:
+
+$$
+u_i^{n+1}
+=
+u_i^{n}
+-
+\frac{\nu}{2}\left(u_{i+1}^{n} - u_{i-1}^{n}\right)
++
+\frac{\nu^{2}}{2}\left(u_{i+1}^{n} - 2u_i^{n} + u_{i-1}^{n}\right).
+$$
+
+The method is second-order accurate and typically less dissipative than upwind, at the cost of mild dispersive ripples near steep gradients.
 
 ## Error metric
 
@@ -83,4 +113,14 @@ $$
      {\lVert u(\cdot,t) \rVert_{2}}.
 $$
 
-This scalar summary, together with the profile plots, is the quantitative evidence reported for the case study.
+## Convergence study
+
+To expose the design order of upwind, the CFL number is held fixed while $N$ varies. Then $\Delta x$ and $\Delta t$ refine together, and a log–log fit of $\varepsilon_2$ versus $\Delta x$ should approach slope $1$.
+
+The default profile figures use the compact parabola above. The convergence script switches to a smooth Gaussian
+
+$$
+u_0(x) = e^{-20 x^{2}}
+$$
+
+so that limited regularity at the parabola edges does not mask the first-order slope. The figure `docs/assets/convergence.png` reports the observed order for that smooth initial datum.

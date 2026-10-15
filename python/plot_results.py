@@ -4,59 +4,20 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from io_util import load_snapshots, relative_l2_error  # noqa: E402
+
 import matplotlib.pyplot as plt
-import numpy as np
-
-
-def load_snapshots(path: Path) -> list[tuple[float, np.ndarray, np.ndarray, np.ndarray]]:
-    """Parse the multi-block CSV written by the C solver."""
-    text = path.read_text()
-    blocks: list[tuple[float, np.ndarray, np.ndarray, np.ndarray]] = []
-    current_time: float | None = None
-    rows: list[list[float]] = []
-
-    for raw in text.splitlines():
-        line = raw.strip()
-        if not line:
-            if current_time is not None and rows:
-                arr = np.asarray(rows, dtype=float)
-                blocks.append((current_time, arr[:, 0], arr[:, 1], arr[:, 2]))
-                rows = []
-                current_time = None
-            continue
-
-        if line.startswith("# time="):
-            current_time = float(line.split("=", 1)[1])
-            continue
-        if line.startswith("#") or line.startswith("x,"):
-            continue
-
-        parts = line.split(",")
-        if len(parts) != 3:
-            continue
-        rows.append([float(p) for p in parts])
-
-    if current_time is not None and rows:
-        arr = np.asarray(rows, dtype=float)
-        blocks.append((current_time, arr[:, 0], arr[:, 1], arr[:, 2]))
-
-    if not blocks:
-        raise ValueError(f"no snapshots found in {path}")
-    return blocks
-
-
-def relative_l2_error(u_exact: np.ndarray, u_numeric: np.ndarray) -> float:
-    denom = np.linalg.norm(u_exact)
-    if denom == 0.0:
-        return float(np.linalg.norm(u_numeric))
-    return float(np.linalg.norm(u_exact - u_numeric) / denom)
 
 
 def plot_profiles(
-    snapshots: list[tuple[float, np.ndarray, np.ndarray, np.ndarray]],
+    snapshots: list[tuple[float, object, object, object]],
     output: Path,
+    scheme: str = "upwind",
 ) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(11.5, 4.2), constrained_layout=True)
 
@@ -65,7 +26,7 @@ def plot_profiles(
         ax.plot(x, u_num, lw=2.0, label=rf"$t = {t:.2f}\,\mathrm{{s}}$")
     ax.set_xlabel(r"$x$ [m]")
     ax.set_ylabel(r"$u(x,t)$")
-    ax.set_title("Numerical solution (upwind)")
+    ax.set_title(f"Numerical solution ({scheme})")
     ax.legend(frameon=False)
     ax.grid(True, alpha=0.25)
 
@@ -100,6 +61,7 @@ def main() -> int:
         default=Path("docs/assets/advection_profiles.png"),
         help="figure path",
     )
+    parser.add_argument("--scheme", default="upwind", help="label used in the title")
     args = parser.parse_args()
 
     snapshots = load_snapshots(args.input)
@@ -108,7 +70,7 @@ def main() -> int:
         err = relative_l2_error(u_ex, u_num)
         print(f"  t = {t:6.3f} s |  ε₂ = {err:.4e}")
 
-    plot_profiles(snapshots, args.output)
+    plot_profiles(snapshots, args.output, scheme=args.scheme)
     print(f"wrote {args.output}")
     return 0
 
