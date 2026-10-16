@@ -1,6 +1,6 @@
 # 1D Linear Advection — Numerical Case Study
 
-A compact scientific-computing portfolio piece by **Juan David Prada Malagon**: the one-dimensional linear advection equation is discretized with explicit finite-difference schemes in C, then verified against the exact traveling-wave solution and analyzed in Python.
+The one-dimensional linear advection equation is discretized with explicit finite-difference schemes in C, then verified against the exact traveling-wave solution and analyzed in Python.
 
 $$
 \frac{\partial u}{\partial t} + c \frac{\partial u}{\partial x} = 0
@@ -13,14 +13,6 @@ $$
 <p align="center">
   <img src="docs/assets/advection_animation.gif" alt="Animation of the advected pulse versus the exact solution" width="640"/>
 </p>
-
-## Author
-
-- **Juan David Prada Malagon** — Data Scientist
-- Email: [pradamalagonjd@gmail.com](mailto:pradamalagonjd@gmail.com)
-- GitHub: [juandapradam12](https://github.com/juandapradam12)
-
-See also [`CITATION.cff`](CITATION.cff).
 
 ## Why this case study
 
@@ -119,7 +111,3 @@ GitHub Actions (`.github/workflows/ci.yml`) builds the solver, runs `make test`,
 ## Documentation
 
 - [Methodology](docs/methodology.md) — PDE, schemes, stability, convergence, and error metric with rendered LaTeX
-
-## Repository
-
-GitHub: [juandapradam12/1DLinearAdvectionEquation](https://github.com/juandapradam12/1DLinearAdvectionEquation)
