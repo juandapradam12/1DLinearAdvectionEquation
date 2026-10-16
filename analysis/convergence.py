@@ -4,15 +4,12 @@
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-from io_util import load_snapshots, relative_l2_error, run_solver  # noqa: E402
+from analysis.io_util import load_snapshots, relative_l2_error, run_solver
 
 
 def observed_order(dx: np.ndarray, err: np.ndarray) -> float:
@@ -76,15 +73,12 @@ def main() -> int:
     fig, ax = plt.subplots(figsize=(6.2, 4.4), constrained_layout=True)
     ax.loglog(dx_arr, err_arr, "o-", lw=2.0, ms=7, label=r"upwind $\varepsilon_2$")
 
-    # Reference slope-1 line anchored at the coarsest point.
     ref = err_arr[0] * (dx_arr / dx_arr[0])
     ax.loglog(dx_arr, ref, "--", color="0.45", lw=1.6, label=r"slope $= 1$")
 
     ax.set_xlabel(r"$\Delta x$ [m]")
     ax.set_ylabel(r"$\varepsilon_2(t_{\mathrm{final}})$")
-    ax.set_title(
-        rf"Upwind convergence (Gaussian IC, CFL $= {args.cfl:g}$)"
-    )
+    ax.set_title(rf"Upwind convergence (Gaussian IC, CFL $= {args.cfl:g}$)")
     ax.grid(True, which="both", alpha=0.25)
     ax.legend(frameon=False)
     ax.text(

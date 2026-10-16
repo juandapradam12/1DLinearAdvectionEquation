@@ -13,7 +13,7 @@ LIB_OBJS  := $(LIB_SRCS:src/%.c=$(BUILD_DIR)/%.o)
 APP_OBJS  := $(APP_SRCS:src/%.c=$(BUILD_DIR)/%.o)
 TEST_OBJS := $(BUILD_DIR)/test_solver.o
 
-.PHONY: all run plot figures test clean distclean
+.PHONY: all run plot figures test demo clean distclean
 
 all: $(BIN)
 
@@ -36,18 +36,23 @@ run: $(BIN)
 	./$(BIN)
 
 plot: run
-	python3 python/plot_results.py
+	python3 -m analysis.plot_results
 
 figures: $(BIN) plot
-	python3 python/convergence.py
-	python3 python/compare_schemes.py
-	python3 python/animate.py
+	python3 -m analysis.convergence
+	python3 -m analysis.compare_schemes
+	python3 -m analysis.animate
 
 test: $(TEST_BIN)
 	./$(TEST_BIN)
 
+demo:
+	chmod +x scripts/demo.sh
+	./scripts/demo.sh
+
 clean:
 	rm -rf $(BUILD_DIR)
+	find analysis -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 
 distclean: clean
 	rm -rf data results

@@ -32,8 +32,9 @@ Advection is a minimal hyperbolic PDE that still exposes the design choices that
 | --- | --- |
 | `include/advection.h`, `src/advection.c` | Problem API: configuration, schemes, exact field, CSV export |
 | `src/main.c` | CLI driver (`--scheme`, `--n-points`, `--dt`, snapshots, …) |
-| `python/` | Profiles, convergence study, scheme comparison, animation |
+| `analysis/` | Importable Python package: profiles, convergence, schemes, animation |
 | `tests/test_solver.c` | Lightweight solver checks (`make test`) |
+| `scripts/demo.sh` | One-command end-to-end demo |
 | `docs/methodology.md` | Governing equation, discretizations, and error metric |
 
 Build orchestration lives in the `Makefile`. Simulation data is written under `data/`; figures under `docs/assets/`.
@@ -53,7 +54,21 @@ Build orchestration lives in the `Makefile`. Simulation data is written under `d
 
 The continuum solution is the rigid translate $u(x,t) = u_0(x - c t)$. With CFL number $\nu = c\Delta t/\Delta x < 1$, upwind remains stable but introduces visible numerical diffusion — intentional here, so the numeric vs exact panel is informative.
 
+## Results (default artifacts)
+
+- Default upwind run: $\varepsilon_2(t=0.60) \approx 2.24\times 10^{-2}$ (numerical diffusion vs the exact translate).
+- Fixed-CFL convergence with a smooth Gaussian IC: observed order $\approx 0.87$ (target design order $1$).
+- Scheme comparison: Lax–Wendroff stays closer to the exact pulse than upwind; FTCS amplitude explodes to $\sim 10^{10}$ by $t\approx 1.5\,\mathrm{s}$.
+
 ## Quick start
+
+```bash
+# full demo: deps + tests + all figures
+./scripts/demo.sh
+# or: make demo
+```
+
+Individual targets:
 
 ```bash
 python3 -m pip install -r requirements.txt
@@ -72,12 +87,12 @@ CLI examples:
   --snapshot-every 0.02 --final-time 0.6 --output data/frames.csv
 ```
 
-Analysis scripts:
+Analysis modules (run as a package — no `sys.path` hacks):
 
 ```bash
-python3 python/convergence.py
-python3 python/compare_schemes.py
-python3 python/animate.py
+python3 -m analysis.convergence
+python3 -m analysis.compare_schemes
+python3 -m analysis.animate
 ```
 
 ## Analysis artifacts
@@ -99,8 +114,12 @@ python3 python/animate.py
 
 ## Continuous integration
 
-GitHub Actions (`.github/workflows/ci.yml`) builds the solver, runs `make test`, regenerates the default figure, and executes the convergence / scheme / animation scripts on every push and pull request.
+GitHub Actions (`.github/workflows/ci.yml`) builds the solver, runs `make test`, regenerates the default figure, and executes the convergence / scheme / animation modules on every push and pull request.
 
 ## Documentation
 
 - [Methodology](docs/methodology.md) — PDE, schemes, stability, convergence, and error metric with rendered LaTeX
+
+## Suggested repository rename
+
+The GitHub remote may still use the original course name (`JuanPrada_Ejercicio29`). For portfolio visibility, rename it in GitHub to something descriptive such as **`1d-linear-advection`** (Settings → General → Repository name), then update the `url` field in [`CITATION.cff`](CITATION.cff).

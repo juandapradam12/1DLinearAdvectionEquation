@@ -4,14 +4,11 @@
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-from io_util import load_snapshots, relative_l2_error  # noqa: E402
-
 import matplotlib.pyplot as plt
+
+from analysis.io_util import load_snapshots, relative_l2_error
 
 
 def plot_profiles(

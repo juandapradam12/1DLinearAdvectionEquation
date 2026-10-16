@@ -84,7 +84,7 @@ u_i^{n}
 \frac{\nu}{2}\left(u_{i+1}^{n} - u_{i-1}^{n}\right).
 $$
 
-For pure advection this method is unconditionally unstable: high-frequency modes grow for any $\nu > 0$. It is included as a negative control in the scheme comparison.
+For pure advection this method is unconditionally unstable: high-frequency modes grow for any $\nu > 0$. It is included as a negative control in the scheme comparison, integrated to a longer final time so the amplitude history makes the blow-up unmistakable.
 
 ### Lax–Wendroff
 

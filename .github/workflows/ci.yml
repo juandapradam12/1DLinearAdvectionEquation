@@ -29,6 +29,6 @@ jobs:
 
       - name: Convergence, scheme comparison, animation
         run: |
-          python3 python/convergence.py
-          python3 python/compare_schemes.py
-          python3 python/animate.py
+          python3 -m analysis.convergence
+          python3 -m analysis.compare_schemes
+          python3 -m analysis.animate

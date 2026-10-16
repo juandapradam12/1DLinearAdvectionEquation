@@ -4,15 +4,12 @@
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, PillowWriter
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-from io_util import load_snapshots, run_solver  # noqa: E402
+from analysis.io_util import load_snapshots, run_solver
 
 
 def main() -> int:
