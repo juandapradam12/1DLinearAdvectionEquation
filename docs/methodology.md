@@ -25,11 +25,7 @@ with initial data $u_0(x) = u(x,0)$. This closed form is used as a reference to 
 The computational domain is $x \in [x_{\min}, x_{\max}] = [-2, 2]$. The initial pulse is the compact parabola
 
 $$
-u_0(x) =
-\begin{cases}
--x^{2} + \tfrac{1}{4}, & |x| \le \tfrac{1}{2}, \\
-0, & \text{otherwise}.
-\end{cases}
+u_0(x) = \begin{cases} -x^{2} + \tfrac{1}{4}, & |x| \le \tfrac{1}{2}, \\ 0, & \text{otherwise}. \end{cases}
 $$
 
 Boundary values at the endpoints are held at their previous time level. For the short integration window used here, the pulse remains inside the domain, so boundary artifacts do not dominate the comparison.
@@ -39,9 +35,7 @@ Boundary values at the endpoints are held at their previous time level. For the 
 The domain is discretized with $N$ uniformly spaced nodes
 
 $$
-x_i = x_{\min} + i\,\Delta x, \qquad
-\Delta x = \frac{x_{\max} - x_{\min}}{N - 1}, \qquad
-i = 0,\ldots,N-1.
+x_i = x_{\min} + i\,\Delta x,\qquad \Delta x = \frac{x_{\max} - x_{\min}}{N - 1},\qquad i = 0,\ldots,N-1.
 $$
 
 Time is advanced with a constant step $\Delta t$. The Courant–Friedrichs–Lewy number is
@@ -59,11 +53,7 @@ Let $u_i^{n} \approx u(x_i, n\Delta t)$. The repository implements three explici
 Because $c > 0$, information propagates from left to right:
 
 $$
-u_i^{n+1}
-=
-u_i^{n}
--
-\nu \left( u_i^{n} - u_{i-1}^{n} \right).
+u_i^{n+1} = u_i^{n} - \nu \left( u_i^{n} - u_{i-1}^{n} \right).
 $$
 
 Stability requires $0 < \nu \le 1$. The scheme is first-order accurate in space and time. Its leading error behaves like numerical diffusion proportional to
@@ -77,11 +67,7 @@ $$
 Centered differences in space with forward Euler in time give
 
 $$
-u_i^{n+1}
-=
-u_i^{n}
--
-\frac{\nu}{2}\left(u_{i+1}^{n} - u_{i-1}^{n}\right).
+u_i^{n+1} = u_i^{n} - \frac{\nu}{2}\left(u_{i+1}^{n} - u_{i-1}^{n}\right).
 $$
 
 For pure advection this method is unconditionally unstable: high-frequency modes grow for any $\nu > 0$. It is included as a negative control in the scheme comparison, integrated to a longer final time so the amplitude history makes the blow-up unmistakable.
@@ -91,13 +77,7 @@ For pure advection this method is unconditionally unstable: high-frequency modes
 Adding the second-order Lax–Wendroff correction restores stability for $|\nu| \le 1$:
 
 $$
-u_i^{n+1}
-=
-u_i^{n}
--
-\frac{\nu}{2}\left(u_{i+1}^{n} - u_{i-1}^{n}\right)
-+
-\frac{\nu^{2}}{2}\left(u_{i+1}^{n} - 2u_i^{n} + u_{i-1}^{n}\right).
+u_i^{n+1} = u_i^{n} - \frac{\nu}{2}\left(u_{i+1}^{n} - u_{i-1}^{n}\right) + \frac{\nu^{2}}{2}\left(u_{i+1}^{n} - 2u_i^{n} + u_{i-1}^{n}\right).
 $$
 
 The method is second-order accurate and typically less dissipative than upwind, at the cost of mild dispersive ripples near steep gradients.
@@ -107,10 +87,7 @@ The method is second-order accurate and typically less dissipative than upwind, 
 At each requested snapshot time $t$, the relative $\ell^{2}$ discrepancy between the numerical field $u^{h}$ and the exact field $u$ is
 
 $$
-\varepsilon_{2}(t)
-=
-\frac{\lVert u^{h}(\cdot,t) - u(\cdot,t) \rVert_{2}}
-     {\lVert u(\cdot,t) \rVert_{2}}.
+\varepsilon_{2}(t) = \frac{\lVert u^{h}(\cdot,t) - u(\cdot,t) \rVert_{2}}{\lVert u(\cdot,t) \rVert_{2}}.
 $$
 
 ## Convergence study
