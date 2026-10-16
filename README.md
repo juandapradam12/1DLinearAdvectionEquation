@@ -120,6 +120,6 @@ GitHub Actions (`.github/workflows/ci.yml`) builds the solver, runs `make test`,
 
 - [Methodology](docs/methodology.md) — PDE, schemes, stability, convergence, and error metric with rendered LaTeX
 
-## Suggested repository rename
+## Repository
 
-The GitHub remote may still use the original course name (`JuanPrada_Ejercicio29`). For portfolio visibility, rename it in GitHub to something descriptive such as **`1d-linear-advection`** (Settings → General → Repository name), then update the `url` field in [`CITATION.cff`](CITATION.cff).
+GitHub: [juandapradam12/1DLinearAdvectionEquation](https://github.com/juandapradam12/1DLinearAdvectionEquation)
