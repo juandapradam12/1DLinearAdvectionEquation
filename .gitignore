@@ -1,0 +1,30 @@
+# Build artifacts
+build/
+*.o
+*.x
+*.out
+bin/
+
+# Simulation outputs
+data/
+*.dat
+*.csv
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# Generated figures (keep docs/assets sample if committed intentionally)
+results/*.png
+results/*.pdf
+!docs/assets/
